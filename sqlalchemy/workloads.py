@@ -114,4 +114,4 @@ def test_class():
     myTest = DataAccessUtil()
     myTest.create_transactions()
 
-print (get_timestamp())
+test_class()
