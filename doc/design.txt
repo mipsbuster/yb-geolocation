@@ -1,0 +1,15 @@
+
+Use cases for services
+
+Build use cases
+1. add new user
+2. add account for new user
+3. delete user and all accounts
+
+1. Read account balance
+2. Deposit for account
+3. Withdrwal from account
+
+Workloads
+1. Grow to break
+2. Steady state
