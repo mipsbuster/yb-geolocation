@@ -31,6 +31,7 @@ from random import seed
 from random import randint
 # seed random number generator
 import time
+from datetime import datetime as dt
 
 
 account_types = ["saving","checking","debit","credit"]
@@ -46,7 +47,7 @@ def get_random_trans_type():
 def get_random_trans_amount():
     return float(decimal.Decimal(random.randrange(15, 88900))/100)
 def get_timestamp():
-    return time.time()
+    return dt.now()
 def get_random_geolocation():
     return random.choice(geo_locations)
 
@@ -87,7 +88,7 @@ class DataAccessUtil:
             new_transactions.txn_type = get_random_trans_type()
             new_transactions.amount = get_random_trans_amount()
             new_transactions.geo_partition = get_random_geolocation()
-            #new_transactions.created_at = get_timestamp()
+            new_transactions.created_at = get_timestamp()
 
             #insert record
             session.add(new_transactions)
@@ -109,5 +110,8 @@ def test_randon():
     print (get_timestamp())
     print(get_random_geolocation())
 
-myTest = DataAccessUtil()
-myTest.create_transactions()
+def test_class():
+    myTest = DataAccessUtil()
+    myTest.create_transactions()
+
+print (get_timestamp())
