@@ -6,6 +6,12 @@
   - need a simple way to allow users to spin up a 3 region demo cluster
   - AWS? 
     - Cloudformation, AWS CDK?
+- Add workloads/SQL/transactions simulating busness process for geo-location
+  - Query account balance
+  - debit account
+  - credit account
+  - close account
+  - open account
 - Update and refactor database build and seed of core data
 - Develop 3-4 use case s and demo examples of geo-location in action
   - loss and then restoe of a region
