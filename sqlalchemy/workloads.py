@@ -15,6 +15,8 @@ WL5 - ACID transaction and rollback for deposit then a transfer with a withdrawl
 '''
 
 #insert transaction into transactions table
+import sys, getopt
+from sys import argv
 
 import logging
 import random
@@ -33,7 +35,6 @@ from random import randint
 import time
 from datetime import datetime as dt
 
-
 account_types = ["saving","checking","debit","credit"]
 transaction_types = ["debit","credit"]
 geo_locations = ["US","EU"]
@@ -51,6 +52,24 @@ def get_timestamp():
 def get_random_geolocation():
     return random.choice(geo_locations)
 
+def FakeTransaction():
+    try:
+        # get a class
+        new_transactions = Transactions()
+
+        # fill in all the fields with fake data
+        new_transactions.user_id = get_random_int()
+        new_transactions.account_id = get_random_int()
+        new_transactions.account_type = get_random_account_type()
+        new_transactions.txn_type = get_random_trans_type()
+        new_transactions.amount = get_random_trans_amount()
+        new_transactions.geo_partition = get_random_geolocation()
+        new_transactions.created_at = get_timestamp()
+    except Exception as e:
+        logging.error('*** Exception in create_transaction: %s' % e)
+        traceback.print_exc()
+
+    return new_transactions
 
 class DataAccessUtil:
 
@@ -77,11 +96,11 @@ class DataAccessUtil:
         session = self.Session()
 
         try:
-            pass
             #get a class
-            new_transactions = Transactions()
+            new_transactions = FakeTransaction()
 
             #fill in all the fields with fake data
+            '''
             new_transactions.user_id = get_random_int()
             new_transactions.account_id = get_random_int()
             new_transactions.account_type = get_random_account_type()
@@ -89,6 +108,7 @@ class DataAccessUtil:
             new_transactions.amount = get_random_trans_amount()
             new_transactions.geo_partition = get_random_geolocation()
             new_transactions.created_at = get_timestamp()
+            '''
 
             #insert record
             session.add(new_transactions)
@@ -102,6 +122,31 @@ class DataAccessUtil:
             raise
         finally:
             session.close()
+
+def create_one_transaction(self):
+
+        session = self.Session()
+
+        try:
+            #get a class
+            new_transactions = FakeTransaction()
+
+            #fill in all the fields with fake data
+
+
+            #insert record
+            session.add(new_transactions)
+            session.commit()
+
+        except Exception as e:
+            logging.error('*** Exception in create_transaction: %s' % e)
+            traceback.print_exc()
+
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
 def test_randon():
     print (get_random_int())
     print (get_random_account_type())
@@ -114,4 +159,79 @@ def test_class():
     myTest = DataAccessUtil()
     myTest.create_transactions()
 
-test_class()
+def get_args(argv):
+    print('args')
+    totalRecords = 1
+    run_option = ''
+    try:
+        print("try")
+        opts, args = getopt.getopt(argv, "hi:o:", ["m=", "s="])
+        print(opts)
+        print(args)
+    except getopt.GetoptError:
+        print("error")
+        print('workloads.py -m <qty> -s ')
+        sys.exit(2)
+    #for opt, arg in opts:
+    opt = opts
+    if opt == '-h':
+        print('workloads.py -m <qty> -o ')
+        sys.exit()
+    elif opt == '-m=':
+        totalRecords = args[0]
+        run_option = 'many'
+    elif opt == '-s':
+        run_option = 'one'
+
+    print('Insert many is "', run_option)
+
+    print('Insert one is "', run_option)
+
+def run_workload(workload,qty):
+    '''
+    take the command line value for -w and run the SQL of the workload for a desired workload. in this version simply a number of times to
+    run the specific workload.
+    Will add options in next versions for time and parallel
+    :return:
+    '''
+    print("Running workload: ",workload," for qty: ",qty)
+
+def run(sysagrs):
+    totalRecords = 1
+    workload_option = ''
+
+    #print('Number of arguments:', len(sys.argv), 'arguments.')
+    #print('Argument List:', str(sys.argv))
+    #print('Length of args ',len (sys.argv))
+
+    argumentsListIncludingFileName = sys.argv
+    argumentsListExcludingFileName = argumentsListIncludingFileName[1:]
+    optionsString = "w:q:h"
+
+    #print(argumentsListIncludingFileName[1:])
+
+    if len(sys.argv) != 5:
+        print("Usage: ./workloads.py  -h -m <total_records_to_insert> -s <inster_one>")
+        print("Note: enter a note here ','")
+        exit(1)
+    optionANDvalues, remainingArguments = getopt.getopt(argumentsListExcludingFileName, optionsString)
+
+    for k, v in optionANDvalues:
+        try:
+            if k == '-h':
+                print("command is help")
+                print("Usage: ./workloads.py  -m <workload_type> -q <total_records_to_insert>")
+                print("Note: enter a note here ','")
+            if k == '-w':
+                workload_option = v
+                print('command for workload type:',workload_option)
+                run_workload(workload_option,argv[4])
+            if k == '-q':
+                totalRecords = v
+                print('quantity to insert:',totalRecords)
+        except:
+            print("error")
+            print('workloads.py -m <workload_type> -q <total_records_to_insert>')
+
+if __name__ == "__main__":
+   run(sys.argv[1:])

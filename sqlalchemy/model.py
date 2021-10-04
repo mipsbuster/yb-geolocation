@@ -6,6 +6,8 @@ import config as cfg
 Base = declarative_base()
 Base.metadata.schema = 'ysql_sqlalchemy'
 
+valid_workloads = ["transactions"]
+
 
 class Transactions(Base):
     __tablename__ = 'transactions'
@@ -22,16 +24,16 @@ class Transactions(Base):
 
     def __repr__(self):
         return "<transaction(userid=%s accountid='%s', account_type='%s', amount='%s', geolocation='%s', txn_type='%s', created='%s')>" % \
-               (self.userid, self.accountid, self.account_type, self.amount, self.geolocation, self.txn_type, self.created)
+               (self.user_id, self.account_id, self.account_type, self.amount, self.geo_partition, self.txn_type, self.created_at)
 
     def to_json(self):
         transaction_json = {
-           "userid": self.userid,
-            "accountid": self.accountid,
+           "userid": self.user_id,
+            "accountid": self.account_id,
             "account_type": self.account_type,
             "self_amount": self.amount,
-            "geolocation": self.geolocation,
+            "geolocation": self.geo_partition,
             "txn_type": self.txn_type,
-            "created": self.created
+            "created": self.created_at
         }
         return transaction_json
